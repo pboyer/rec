@@ -1,39 +1,34 @@
 
-type O = { [key: string] : any };
-type A = any[];
-type V = O | A | string | number | boolean;
-type I = string | number;
+export type O = { [key: string] : any };
+export type A = any[];
+export type V = O | A | string | number | boolean;
+export type I = string | number;
 
 export type UPDATE = 'UPDATE';
 export const UPDATE : UPDATE = 'UPDATE';
-type Update = { type : UPDATE, path? : I[], v : V, old? : V };
+export type Update = { type : UPDATE, path? : I[], v : V, old? : V };
 
 export type INSERT = 'INSERT';
 export const INSERT : INSERT = 'INSERT';
-type Insert = { type : INSERT, path? : I[], v : V, old? : V };
+export type Insert = { type : INSERT, path? : I[], v : V, old? : V };
 
 export type DELETE = 'DELETE';
 export const DELETE : DELETE = 'DELETE';
-type Delete = { type : DELETE, path? : I[], old? : V };
+export type Delete = { type : DELETE, path? : I[], old? : V };
 
-type D = Update | Insert | Delete;
+export type D = Update | Insert | Delete;
 
-function Apply(v : V, d : D | D[]) : V {
+export function Apply(o : O, d : D | D[]) : O {
     if (d instanceof Array){
         for (let id of d){
-            v = Apply(v, id);
+            Apply(o, id);
         }
-        return v;
+        return o;
     }
 
     switch (d.type) {
     case UPDATE: {
-        if (!d.path) {
-            d.old = v;
-            return d.v;
-        }
-        
-        let path = d.path, dest = v;
+        let path = d.path, dest = o;
         for (let i = 0, l = path.length - 1; i < l; i++) {
             dest = dest[path[i]];
         }
@@ -41,15 +36,10 @@ function Apply(v : V, d : D | D[]) : V {
         let i = path[path.length-1];
         d.old = dest[i];
         dest[i] = d.v;
-        return v;
+        return o;
     }
     case INSERT: {
-        if (!d.path) {
-            d.old = v;
-            return d.v;
-        }
-        
-        let path = d.path, dest = v;
+        let path = d.path, dest = o;
         for (let i = 0, l = path.length - 1; i < l; i++) {
             dest = dest[path[i]];
         }
@@ -64,15 +54,10 @@ function Apply(v : V, d : D | D[]) : V {
             dest[i] = d.v;
         }
 
-        return v;
+        return o;
     }
     case DELETE: {
-        if (!d.path) {
-            d.old = v;
-            return null;
-        }
-        
-        let path = d.path, dest = v;
+        let path = d.path, dest = o;
         for (let i = 0, l = path.length - 1; i < l; i++) {
             dest = dest[path[i]];
         }
@@ -86,12 +71,12 @@ function Apply(v : V, d : D | D[]) : V {
             delete(dest[i]);
         }
 
-        return v;
+        return o;
     }
     }
 }
 
-function Invert(d : D[] | D) : D[] | D {
+export function Invert(d : D[] | D) : D[] | D {
     if (d instanceof Array){
         let dn = d.map(Invert);
         dn.reverse();
