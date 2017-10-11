@@ -1,7 +1,7 @@
 import * as rec from './rec'
 import { stringifyStable } from './stringify'
 
-let v = {};
+// There are a bunch of functions here for determinisitic generation of random data
 
 let stringKeys : rec.I[] = ['foo', 'bar', 'baz', 'frobnitz', 'bam', 'boom', 'fizz', 'buzz', 'a', 'b', 'c'];
 let numbKeys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
@@ -188,13 +188,6 @@ function randD(root : rec.O) : rec.D {
     }
 }
 
-// remove support for tracking non-object
-// randomObject
-// randomChangeFromObject
-
-// start from non-zero state
-// move to a valid, new state via a random change
-
 function format(v : any) {
     return JSON.stringify(v, null, '  ')
 }
@@ -203,6 +196,10 @@ function print(v : any) {
     console.log(format(v));
 }
 
+// Single test
+
+// This test generates a random object, applies a random change, applies the inverse change, 
+// and then checks the object has returned to its original state.
 {
     const trials = 1 << 7;
     const subTrials = 1 << 7;
@@ -250,9 +247,13 @@ function print(v : any) {
     }
 }
 
+// Compound test
+
+// This test generates a random object, applies a large number of changes sequentially, inverts 
+// them all as a Compound, then checks the object is back to its original state. 
 {
-    const trials = 1 << 5;
-    const subTrials = 1 << 5;
+    const trials = 1 << 7;
+    const numDs = 1 << 7;
 
     for (let i = 0; i < trials; i++) {
         const o = randObject(5,5);
@@ -261,7 +262,7 @@ function print(v : any) {
         let s1, s2;
 
         try {
-            for (let j = 0; j < subTrials; j++) {
+            for (let j = 0; j < numDs; j++) {
                 const d = randD(o);
                 ds.push(d);
                 rec.Apply(o, d);
@@ -295,4 +296,5 @@ AfterDInvert:
 ${ JSON.stringify(JSON.parse(s2), null, ' ') }`)
         }
     }
-}
+};
+
