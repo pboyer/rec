@@ -1,12 +1,12 @@
 # Rec
 
-Rec is a simple JavaScript library for working with JSON. Consider it a foundation to implement undo, redo, diffing, and event systems. 
+Rec is a foundational library to implement undo, redo, diffing, and event systems in JavaScript.
 
 ### Benefits:
 
-* The library has no dependencies.
-* It is extensively tested by a random testing methodology.
-* When compiled to JavaScript, the library is less than 100 lines long.
+* No dependencies.
+* Extensively tested.
+* Less than 100 lines long.
 
 ## Installation
 
