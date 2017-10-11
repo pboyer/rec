@@ -1,4 +1,3 @@
-
 export type O = { [key: string] : any };
 export type A = any[];
 export type V = O | A | string | number | boolean;
@@ -86,7 +85,7 @@ export function Invert(d : D) : D {
                 old : d.v
             };
         case INSERT:
-            // This field is non-null when the client tried to insert a value into 
+            // This field is non-empty when the client tries to insert a value into 
             // an Object where the key was already defined.
             if (d.old !== undefined) {
                 return {

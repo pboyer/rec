@@ -1,68 +1,74 @@
-### Recorder
+# Rec
 
-Recorder is a tiny
+Rec is a simple JavaScript library for working with JSON. Consider it a foundation to implement undo, redo, diffing, and event systems. 
 
-### How to use it
+### Benefits:
 
-All changes go through the `Apply` function.
+* The library has no dependencies.
+* It is extensively tested by a random testing methodology.
+* When compiled to JavaScript, the library is less than 100 lines long.
 
-```
-Apply()
-```
-
-. `Apply` returns a value, this may or may not be the original value depending on whether the input is a reference (i.e. `Object` or `Array`) or an atom (i.e. `Number`, `Bool`, `String`).
+## Installation
 
 ```
-let v = {};
-
-let op = { type: INSERT, path : ["foo"], v : 12 };
-v = Apply(v, op);
-console.log(v); // { "foo" : 12 }
+npm install rec-js
 ```
 
-There are only three types of `D`:
+## Usage
 
-* `Insert` - Insert a value into an `Object` or `Array`.
-* `Update` - Set a value in an object or `Array`.
-* `Delete`
+The entire library is in `rec.ts`.
 
+### D
 
+There are four types of deltas:
 
-The `Invert` function inverts any `D`.
+* `Insert` - Insert a value into an `Object` or `Array` at the given key.
+* `Update` - Set a value in an `Object` or `Array` to a new value.
+* `Delete` - Delete a value from an `Object` or `Array`. 
+* `Compound` - A compound of the three earlier types of `D`.
 
+### Apply
 
+All deltas must be applied through the `Apply` function.
 
-let opinvert = Invert(op as D[];
+```
+Apply(o : O, d : D) : O
+```
 
+An `O` is an `Object`. A `D` is a delta. `Apply` applies the `D` to the `O` argument.
 
-    let op2 = { type: INSERT, path : ["bar"], v : { "baz" : 24 } };
-    let op3 = { type: INSERT, path : ["bar", "baz"], v : "noodle" };
+`Apply` returns the same `O` after modification, for convenience. The object is modified by reference. It's not a new object.
 
-    
-    
+```
+let o = {}; // this could be any object - it doesn't have to be empty
 
-    v = Apply(v, op2);
+let d = { type: INSERT, path : ["foo"], v : 12 };
+o = Apply(o, d);
+console.log(o); // prints { "foo" : 12 }
+```
 
-    console.log(v);
+### Invert
 
-    v = Apply(v, op3);
+The `Invert` function inverts any `D`. You can only invert a `D` after it has been applied. Continuing from the example above:
 
-    console.log(v);
+```
+let dinverse = Invert(d);
+o = Apply(o, dinverse);
+console.log(o); // prints {}
+```
 
-    let rev = Invert([op, op2, op3]) as D[];
+## Building
 
-    v = Apply(v, rev)
+```
+npm run build
+```
 
-    console.log(v);
-}
+## Testing
 
-{
-    let v = {};
+Rec has been extensively tested by deterministic, random test generation. The test suite runs >10k unique tests.
 
-    let op = { type: INSERT, path : ["foo"], v : 12 };
+To run the tests:
 
-    v = Apply(v, op);
-
-
-
-}
+```
+npm test
+```

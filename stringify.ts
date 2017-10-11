@@ -1,3 +1,5 @@
+// Copied from https://github.com/nickyout/fast-stable-stringify/blob/master/index.js
+
 var objToString = Object.prototype.toString;
 var objKeys = Object.keys || function(obj) {
 		var keys = [];

@@ -1,0 +1,29 @@
+{
+  "name": "rec-js",
+  "version": "1.0.0",
+  "description": "Rec is a simple JavaScript library for working with JSON. It's a good foundation to implement undo, redo, diffing, and event systems. ",
+  "main": "rec.js",
+  "scripts": {
+    "build": "tsc rec.ts test.ts stringify.ts",
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/pboyer/rec.git"
+  },
+  "keywords": [
+    "undo",
+    "redo",
+    "diff",
+    "event"
+  ],
+  "devDependencies": {
+    "typescript": "2.5.3^"
+  },
+  "author": "Peter Boyer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pboyer/rec/issues"
+  },
+  "homepage": "https://github.com/pboyer/rec#readme"
+}

@@ -201,8 +201,8 @@ function print(v : any) {
 // This test generates a random object, applies a random change, applies the inverse change, 
 // and then checks the object has returned to its original state.
 {
-    const trials = 1 << 7;
-    const subTrials = 1 << 7;
+    const trials = 1 << 10;
+    const subTrials = 1 << 10;
 
     for (let i = 0; i < trials; i++) {
         const o = randObject(5, 5);
@@ -252,8 +252,8 @@ function print(v : any) {
 // This test generates a random object, applies a large number of changes sequentially, inverts 
 // them all as a Compound, then checks the object is back to its original state. 
 {
-    const trials = 1 << 7;
-    const numDs = 1 << 7;
+    const trials = 1 << 10;
+    const numDs = 1 << 10;
 
     for (let i = 0; i < trials; i++) {
         const o = randObject(5,5);
