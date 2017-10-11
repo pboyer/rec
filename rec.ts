@@ -1,4 +1,3 @@
-
 export type O = { [key: string] : any };
 export type A = any[];
 export type V = O | A | string | number | boolean;
@@ -16,16 +15,13 @@ export type DELETE = 'DELETE';
 export const DELETE : DELETE = 'DELETE';
 export type Delete = { type : DELETE, path? : I[], old? : V };
 
-export type D = Update | Insert | Delete;
+export type COMPOUND = 'COMPOUND';
+export const COMPOUND : COMPOUND = 'COMPOUND';
+export type Compound = { type : COMPOUND, ds : D[] };
 
-export function Apply(o : O, d : D | D[]) : O {
-    if (d instanceof Array){
-        for (let id of d){
-            Apply(o, id);
-        }
-        return o;
-    }
+export type D = Update | Insert | Delete | Compound;
 
+export function Apply(o : O, d : D) : O {
     switch (d.type) {
     case UPDATE: {
         let path = d.path, dest = o;
@@ -45,12 +41,11 @@ export function Apply(o : O, d : D | D[]) : O {
         }
 
         let i = path[path.length-1];
-        d.old = null;
 
         if (dest instanceof Array) {
-            // todo check it's a number
-            dest.splice(i as number, 1, d.v);
+            dest.splice(i as number, 0, d.v);
         } else {
+            d.old = dest[i]; // an object insert may overwrite the key
             dest[i] = d.v;
         }
 
@@ -73,16 +68,14 @@ export function Apply(o : O, d : D | D[]) : O {
 
         return o;
     }
+    case COMPOUND: {
+        for (let i = 0, l = d.ds.length; i < l; i++) Apply(o, d.ds[i])
+        return d;
+    } 
     }
 }
 
-export function Invert(d : D[] | D) : D[] | D {
-    if (d instanceof Array){
-        let dn = d.map(Invert);
-        dn.reverse();
-        return dn as D[];
-    }
-
+export function Invert(d : D) : D {
     switch (d.type) {
         case UPDATE:
             return {
@@ -92,18 +85,35 @@ export function Invert(d : D[] | D) : D[] | D {
                 old : d.v
             };
         case INSERT:
+            // This field is non-null when the client tried to insert a value into 
+            // an Object where the key was already defined.
+            if (d.old !== undefined) {
+                return {
+                    type: UPDATE,
+                    path: d.path,
+                    v : d.old,
+                    old : d.v
+                }
+            }
+
             return {
                 type: DELETE,
                 path : d.path,
-                v : d.old,
                 old : d.v
             };
-        case DELETE: {
+        case DELETE:
             return {
                 type: INSERT,
                 path : d.path,
                 v : d.old,
                 old : null
+            };
+        case COMPOUND: {
+            let ds = d.ds.map(Invert);
+            ds.reverse();
+            return {
+                type: COMPOUND,
+                ds: ds
             };
         }
     }
