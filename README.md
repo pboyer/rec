@@ -1,6 +1,6 @@
 # Rec
 
-Rec is a foundational library to implement undo, redo, diffing, and event systems in JavaScript.
+Rec is a foundational library for implementing undo, redo, diffing, and event systems in JavaScript.
 
 ### Benefits:
 
